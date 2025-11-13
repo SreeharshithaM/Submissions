@@ -1,0 +1,1 @@
+(()=>{"use strict";console.log("Addition Result:",5+3),console.log("String Length:",function(t){return t.length}("TypeScript"))})();

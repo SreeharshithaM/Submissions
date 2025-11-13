@@ -1,0 +1,13 @@
+#!meta
+
+{"kernelInfo":{"defaultKernelName":"javascript","items":[{"name":"csharp","languageName":"C#","aliases":["c#","cs"]},{"name":"fsharp","languageName":"F#","aliases":["f#","fs"]},{"name":"html","languageName":"HTML"},{"name":"http","languageName":"HTTP"},{"name":"javascript","languageName":"javascript"},{"name":"mermaid","languageName":"Mermaid"},{"name":"pwsh","languageName":"PowerShell","aliases":["powershell"]},{"name":"value"}]}}
+
+#!csharp
+
+function findCommonElements(arr1, arr2) {
+  return arr1.filter(item => arr2.includes(item));
+}
+
+// Example usage:
+console.log(findCommonElements([1, 2, 3, 4], [3, 4, 5])); // [3, 4]
+console.log(findCommonElements(["apple", "banana"], ["banana", "grape"])); // ["banana"]
