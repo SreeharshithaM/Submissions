@@ -1,0 +1,7 @@
+Assumptions:
+- SQL Server database
+- Passwords are stored as hashes
+- Each user can have multiple accounts
+- Account numbers are unique
+- System has basic user roles
+- No complex banking operations
