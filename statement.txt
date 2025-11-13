@@ -1,0 +1,10 @@
+SIMPLE USER AND ACCOUNT MANAGEMENT SYSTEM
+
+A basic system to manage users and their bank accounts.
+
+Features:
+- User registration and login
+- Users can have multiple bank accounts
+- Each account has balance and type
+- Track account transactions
+- Simple user role management
