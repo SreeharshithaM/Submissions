@@ -1,0 +1,292 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>140 CSS Colors — Responsive Flex Grid</title>
+<style>
+  :root{
+    --gap: 12px;
+    --swatch-size: 120px; /* will be updated by JS */
+    --header-height: 84px;
+  }
+
+  html,body{
+    height:100%;
+    margin:0;
+    font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    background:#f6f7fb;
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+  }
+
+  header{
+    height: var(--header-height);
+    padding: 16px;
+    display:flex;
+    align-items:center;
+    gap:16px;
+    background: linear-gradient(90deg,#ffffff,#f3f6ff);
+    border-bottom: 1px solid rgba(0,0,0,0.06);
+    box-shadow: 0 1px 0 rgba(0,0,0,0.03);
+  }
+  header h1{
+    font-size:18px;
+    margin:0;
+    color:#0b1a3a;
+  }
+  header p{
+    margin:0 0 0 auto;
+    color:#2b3a66;
+    opacity:0.8;
+    font-size:13px;
+  }
+
+  /* container uses flex-wrap to create responsive rows */
+  .wrap {
+    display:flex;
+    flex-wrap:wrap;
+    gap: var(--gap);
+    padding: calc(var(--gap) + 12px);
+    box-sizing:border-box;
+    align-content:flex-start;
+    /* Ensure container height considers header */
+    min-height: calc(100vh - var(--header-height));
+  }
+
+  .swatch {
+    width: var(--swatch-size);
+    height: var(--swatch-size);
+    border-radius: 8px;
+    display:flex;
+    flex-direction:column;
+    justify-content:flex-end;
+    padding: 8px;
+    box-sizing:border-box;
+    color: #000;
+    text-shadow: 0 1px 0 rgba(255,255,255,0.12);
+    font-size: 13px;
+    line-height:1;
+    box-shadow: 0 2px 6px rgba(13,26,52,0.06);
+    border: 1px solid rgba(0,0,0,0.04);
+    transition: transform .12s ease, box-shadow .12s ease;
+    overflow:hidden;
+  }
+  .swatch:hover{
+    transform: translateY(-6px);
+    box-shadow: 0 8px 18px rgba(13,26,52,0.12);
+  }
+
+  .meta {
+    backdrop-filter: blur(2px);
+    background: rgba(255,255,255,0.18);
+    padding:6px 8px;
+    border-radius:6px;
+    display:flex;
+    justify-content:space-between;
+    gap:8px;
+    align-items:center;
+    font-weight:600;
+  }
+  .name {
+    font-size:12px;
+    text-transform: none;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    max-width: 70%;
+  }
+  .hex {
+    font-size:11px;
+    opacity:0.95;
+  }
+
+  /* Responsive hints for very small screens */
+  @media (max-width:420px){
+    :root { --gap:8px; }
+    header h1 { font-size:16px; }
+    .swatch { border-radius:6px; }
+  }
+
+  /* footer */
+  footer{
+    padding: 10px 16px;
+    font-size:12px;
+    color:#42506e;
+    opacity:0.9;
+  }
+</style>
+</head>
+<body>
+  <header>
+    <h1>140 CSS Color Names — Responsive Flex Grid</h1>
+    <p id="info">Calculating layout…</p>
+  </header>
+
+  <main class="wrap" id="wrap" role="list" aria-label="CSS color swatches">
+    <!-- swatches injected by JS -->
+  </main>
+
+  <footer>
+    Resize the window — swatches adapt to width & height. Hover for emphasis.
+  </footer>
+
+<script>
+/* All 140 CSS color names (standard) — lower-case for convenience */
+const CSS_COLORS = [
+  "aliceblue","antiquewhite","aqua","aquamarine","azure","beige","bisque","black","blanchedalmond","blue",
+  "blueviolet","brown","burlywood","cadetblue","chartreuse","chocolate","coral","cornflowerblue","cornsilk","crimson",
+  "cyan","darkblue","darkcyan","darkgoldenrod","darkgray","darkgreen","darkgrey","darkkhaki","darkmagenta","darkolivegreen",
+  "darkorange","darkorchid","darkred","darksalmon","darkseagreen","darkslateblue","darkslategray","darkslategrey","darkturquoise","darkviolet",
+  "deeppink","deepskyblue","dimgray","dimgrey","dodgerblue","firebrick","floralwhite","forestgreen","fuchsia","gainsboro",
+  "ghostwhite","gold","goldenrod","gray","green","greenyellow","grey","honeydew","hotpink","indianred",
+  "indigo","ivory","khaki","lavender","lavenderblush","lawngreen","lemonchiffon","lightblue","lightcoral","lightcyan",
+  "lightgoldenrodyellow","lightgray","lightgreen","lightgrey","lightpink","lightsalmon","lightseagreen","lightskyblue","lightslategray","lightslategrey",
+  "lightsteelblue","lightyellow","lime","limegreen","linen","magenta","maroon","mediumaquamarine","mediumblue","mediumorchid",
+  "mediumpurple","mediumseagreen","mediumslateblue","mediumspringgreen","mediumturquoise","mediumvioletred","midnightblue","mintcream","mistyrose","moccasin",
+  "navajowhite","navy","oldlace","olive","olivedrab","orange","orangered","orchid","palegoldenrod","palegreen",
+  "paleturquoise","palevioletred","papayawhip","peachpuff","peru","pink","plum","powderblue","purple","rebeccapurple",
+  "red","rosybrown","royalblue","saddlebrown","salmon","sandybrown","seagreen","seashell","sienna","silver",
+  "skyblue","slateblue","slategray","slategrey","snow","springgreen","steelblue","tan","teal","thistle",
+  "tomato","turquoise","violet","wheat","white","whitesmoke","yellow","yellowgreen"
+];
+
+/* helper: convert rgb() or rgba() string to hex */
+function rgbStringToHex(rgbStr){
+  // rgb( r, g, b ) or rgba(...)
+  const m = rgbStr.match(/rgba?\(([^)]+)\)/i);
+  if(!m) return "";
+  const parts = m[1].split(',').map(s=>parseFloat(s.trim()));
+  const r = Math.round(parts[0]||0);
+  const g = Math.round(parts[1]||0);
+  const b = Math.round(parts[2]||0);
+  return "#" + [r,g,b].map(v => v.toString(16).padStart(2,'0')).join('').toUpperCase();
+}
+
+/* helper: compute luminance to choose readable text color */
+function getContrastTextColor(r,g,b){
+  // sRGB Luminance
+  const srgb = [r,g,b].map(c => {
+    c = c / 255;
+    return c <= 0.03928 ? c/12.92 : Math.pow((c+0.055)/1.055,2.4);
+  });
+  const lum = 0.2126*srgb[0] + 0.7152*srgb[1] + 0.0722*srgb[2];
+  // WCAG recommended threshold ~0.179
+  return lum > 0.5 ? "#000000" : "#FFFFFF";
+}
+
+/* create a test element once for computed color */
+const probe = document.createElement("div");
+probe.style.display = "none";
+document.body.appendChild(probe);
+
+const wrap = document.getElementById("wrap");
+const info = document.getElementById("info");
+
+function buildSwatches(){
+  // clear existing
+  wrap.innerHTML = "";
+
+  CSS_COLORS.forEach(name => {
+    const card = document.createElement("div");
+    card.className = "swatch";
+    card.setAttribute("role","listitem");
+    card.setAttribute("aria-label", name);
+
+    // set background using name
+    card.style.backgroundColor = name;
+
+    // compute computed color (rgb)
+    probe.style.color = name;
+    const computed = getComputedStyle(probe).color; // e.g. "rgb(240,248,255)"
+    const hex = rgbStringToHex(computed);
+
+    // parse rgb for contrast
+    const m = computed.match(/rgba?\(([^)]+)\)/i);
+    let textColor = "#000";
+    if(m){
+      const [r,g,b] = m[1].split(',').map(s => Math.round(parseFloat(s)));
+      textColor = getContrastTextColor(r,g,b);
+    }
+
+    // meta container
+    const meta = document.createElement("div");
+    meta.className = "meta";
+    meta.style.color = textColor;
+
+    const nameEl = document.createElement("div");
+    nameEl.className = "name";
+    // preserve original casing for nicer display
+    const niceName = name.replace(/(^|-)./g, s => s.toUpperCase());
+    nameEl.textContent = niceName;
+
+    const hexEl = document.createElement("div");
+    hexEl.className = "hex";
+    hexEl.textContent = hex || "";
+
+    meta.appendChild(nameEl);
+    meta.appendChild(hexEl);
+    card.appendChild(meta);
+    wrap.appendChild(card);
+  });
+}
+
+/* layout calculator: choose swatch size based on viewport width & height */
+function recalcLayout(){
+  const vw = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
+  const vh = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
+
+  // gap & container padding
+  const gap = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--gap')) || 12;
+  const headerHeight = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--header-height')) || 84;
+  const availW = vw - gap*2;
+  const availH = vh - headerHeight - gap*2 - 24; // footer & padding buffer
+
+  // aim for swatches of about 120px but adapt
+  // compute columns by dividing availW by target size
+  const target = 140; // ideal swatch+gap
+  let columns = Math.max(1, Math.floor(availW / target));
+  // sometimes floor returns 0 for tiny screens
+  columns = Math.max(1, columns);
+
+  // compute width-based size
+  const swFromWidth = Math.floor((availW - (columns - 1)*gap) / columns);
+
+  // compute rows required and height-based constraint
+  const rows = Math.ceil(CSS_COLORS.length / columns);
+  const swFromHeight = Math.floor((availH - (rows - 1)*gap) / rows);
+
+  // final size is min(width-optimized, height-optimized), clamped
+  let size = Math.max(60, Math.min(swFromWidth, swFromHeight || swFromWidth));
+  size = Math.min(size, 260); // prevent overly large
+
+  // if height constraint makes size too small (e.g. landscape skinny), increase columns
+  if(size < 80 && columns < CSS_COLORS.length){
+    columns = Math.min(CSS_COLORS.length, columns + 1);
+    const sw2 = Math.floor((availW - (columns - 1)*gap) / columns);
+    const rows2 = Math.ceil(CSS_COLORS.length / columns);
+    const sh2 = Math.floor((availH - (rows2 - 1)*gap) / rows2);
+    size = Math.max(60, Math.min(sw2, sh2 || sw2));
+  }
+
+  // set CSS var
+  document.documentElement.style.setProperty('--swatch-size', size + "px");
+
+  // update info
+  info.textContent = `${CSS_COLORS.length} colors • ${columns} column${columns>1?'s':''} • swatch ${size}px`;
+}
+
+window.addEventListener('resize', () => {
+  recalcLayout();
+});
+
+// initial render
+buildSwatches();
+recalcLayout();
+
+// Recalculate after fonts and paint (safety)
+setTimeout(() => recalcLayout(), 120);
+setTimeout(() => recalcLayout(), 800);
+</script>
+</body>
+</html>
